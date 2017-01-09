@@ -50,6 +50,14 @@ brian d foy, C<< brian.d.foy@gmail.com >>
 
 =end pod
 
+say "Args are @*ARGS[]";
+# If one of the formatting switches isn't there, the -C
+# is the default. But, I can't modify the value of $C after
+# argument processing. I'll preprocess the argument list to
+# insert it.
+my @switches = @*ARGS.grep( /^\-<[bCcdox]>$/ );
+@*ARGS.unshift( '-C' ) unless @switches.elems;
+
 sub MAIN (
 	Filename $file,
 	Bool :$b = False, # octets, three columns
@@ -63,6 +71,7 @@ sub MAIN (
 	# length might need to align to boundaries?
 	Int  :$n where { $_ >= 0 } = 0,     # length
 	) {
+
 	my $fh = try { open $file, :r, :bin } or
 		die "Could not open $file: $!";
 	$fh.seek: $s;
