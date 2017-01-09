@@ -1,0 +1,183 @@
+#!/Applications/Rakudo/bin/perl6
+
+subset Filename of Str where .IO.r;
+
+=begin pod
+
+=head1 NAME
+
+hexdump -- ASCII, decimal, hexadecimal, octal dump
+
+=head1 SYNOPSIS
+
+	hexdump [-bCcdox] [-s=skip] [-n=length] file
+
+=head1 DESCRIPTION
+
+The B<hexdump> utility shows the contents of a file in either
+octets or words, in character, decimal, octal, or hexadecimal
+values.
+
+=item -b Display each octet as its hexadecimal value, 16 octets per line.
+
+=item -C Display each octet as its hexadecimal value, with a summary of the ASCII characters
+
+=item -c Display each octet as the corresponding ASCII character, or a ., 16 octets per line.
+
+=item -d Display each word as its decimal value, 8 words per line.
+
+=item -n Limit the number of octets to read, 16 octets per line.
+
+=item -o Display each word as its octal value, 8 words per line.
+
+=item -s Start at the octet specified in decimal, 16 octets per line.
+
+=item -x Display each word as its hexadecimal value, 8 words per line.
+
+=head1 DIAGNOSTICS
+
+=head1 EXAMPLES
+
+=head1 LICENSE
+
+This code is available under The Artistic License 2.0.
+
+=head1 AUTHOR & COPYRIGHT
+
+Copyright © 2017, brian d foy.
+
+brian d foy, C<< brian.d.foy@gmail.com >>
+
+=end pod
+
+sub MAIN (
+	Filename $file,
+	Bool :$b = False, # octets, three columns
+	Bool :$C = False, # octets, hex and ascii
+	Bool :$c = False, # octets, character
+	Bool :$d = False, # words, decimal
+	Bool :$o = False, # words, octal
+	Bool :$x = False, # words, hex
+	Int  :$s where { $_ ~~ 0 .. $file.IO.s } = 0, # offset
+
+	# length might need to align to boundaries?
+	Int  :$n where { $_ >= 0 } = 0,     # length
+	) {
+	my $fh = try { open $file, :r, :bin } or
+		die "Could not open $file: $!";
+	$fh.seek: $s;
+
+	# either read the default number to read, or the number left in
+	# the limit.
+	my $counter = 0;
+	while my Buf $buf = $fh.read( octets_to_read( $counter, $n ) ) {
+		# You can select more than one option at a time
+		# change the option order to change the output order
+		# These correspond to the named Bool parameters in the signature
+		state @options = qw/ C c d b o x /;
+		for @options -> $option {
+			next unless $::($option);
+			put $counter.fmt( '%08x  ' ), &::("show_$option")($buf);
+			}
+		$counter += $buf.elems;
+		last if $n && $counter >= $n;
+		}
+
+	$counter.fmt( '%08x  ' ).print;
+	}
+
+#| when you read a word, take the octets in this order
+sub endian        () { little_endian() }
+sub little_endian () { ( 1, 0 ) }
+sub big_endian    () { ( 0, 1 ) }
+
+#| determine how many octets to read
+#| I'd like this to be rw at some point so it can be a command-line
+#! option
+sub default_octets_to_read { 16 }
+multi octets_to_read ( Int $counter, 0 )  { default_octets_to_read() }
+multi octets_to_read ( Int $counter, Int $n ) {
+	min 16, $n - $counter;
+	}
+
+#| Reads octets and displays them as octal
+sub show_b ( Buf $buf ) {
+	show_octets( $buf, '%03o', ' ' )
+	}
+
+#| Reads octets and displays them hexadecimal
+sub show_C ( Buf $buf ) {
+	# the hex portion has to be a certain length for the next
+	# part to align. I'd like it to figure this out on its own
+	# but it needs to know how many octets should have been in
+	# the buffer.
+	state $hex_length = default_octets_to_read() * 3;
+	my $hex = show_octets( $buf, '%02x', ' ' );
+
+	# pad the line for the last octets read
+	$hex ~= ' ' x ( $hex_length - $hex.chars )
+		if $hex.chars < $hex_length;
+
+	# This inserts the double space after 8 bytes
+	try { $hex.substr-rw( $hex_length / 2, 0 ) = ' ' }
+
+	# format the literal text for the last column
+	my $cols = $buf
+		.map( { .chr } )
+		.join( '' )
+		# This pattern could be so much better
+		# I want to remove non-printables so they don't
+		# screw up the formatting
+		.subst( / <-[ \x20 .. \x7e ]> /, '.', :g );
+
+	$hex ~ " |$cols|";
+	}
+
+#| Reads octets and displays them as ASCII characters
+sub show_c ( Buf $buf ) {
+	$buf
+		# still need to align to right
+		.map( { .chr.fmt( '%2s' ) } )
+		.join( ' ' )
+		# This could be so much better
+		.subst( / \n /, '\\n', :g )
+		.subst( / \t /, '\\t', :g )
+		.subst( / \007 /, '\\a', :g )
+		;
+	}
+
+#| Reads words (two octets) and displays them in decimal, little endian
+sub show_d ( Buf $buf ) {
+	show_words( $buf, '%05d', ' ' x 3 );
+	}
+
+#| Reads words (two octets) and displays them in octal, little endian
+sub show_o ( Buf $buf ) {
+	show_words( $buf, '%06o', ' ' x 2 )
+	}
+
+#| Reads words (two octets) and displays them in hexadecimal, little endian
+sub show_x ( Buf $buf ) {
+	show_words( $buf, '%04x', ' ' x 4 );
+	}
+
+#| Format a list octets based on the template and glue
+#| strings.
+sub show_octets ( Buf $buf, Str $template, Str $glue ) {
+	$buf
+		.map( { .fmt( $template ) } )
+		.join( $glue )
+	}
+
+#| Format a list of words (two octets) based on the template and glue
+#| strings.
+sub show_words ( Buf $buf, Str $template, Str $glue ) {
+	state $e = endian();
+	$buf
+		.rotor( 2 )
+		.map( {
+			( .[ $e[0] ] +< 8 + .[ $e[1] ] )
+				.fmt( $template )
+			} )
+		.join( $glue )
+	}

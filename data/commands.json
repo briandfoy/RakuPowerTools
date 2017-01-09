@@ -1,0 +1,13 @@
+{
+"addbib.1": {
+	"class": "command",
+	"contrib": [
+		{
+		"name": "hexdump",
+		"author": "brian d foy",
+		"email": "brian.d.foy@gmail.com",
+		"date": "2017.01.08"
+		}
+		]
+	}
+}
