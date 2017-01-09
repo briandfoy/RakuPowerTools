@@ -50,7 +50,6 @@ brian d foy, C<< brian.d.foy@gmail.com >>
 
 =end pod
 
-say "Args are @*ARGS[]";
 # If one of the formatting switches isn't there, the -C
 # is the default. But, I can't modify the value of $C after
 # argument processing. I'll preprocess the argument list to
