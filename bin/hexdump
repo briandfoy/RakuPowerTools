@@ -79,13 +79,12 @@ sub MAIN (
 	# either read the default number to read, or the number left in
 	# the limit.
 	my $counter = 0;
+	my @options = qw/ C c d b o x /.grep: { $::($_) };
 	while my Buf $buf = $fh.read( octets_to_read( $counter, $n ) ) {
 		# You can select more than one option at a time
 		# change the option order to change the output order
 		# These correspond to the named Bool parameters in the signature
-		state @options = qw/ C c d b o x /;
 		for @options -> $option {
-			next unless $::($option);
 			put $counter.fmt( '%08x  ' ), &::("show_$option")($buf);
 			}
 		$counter += $buf.elems;
