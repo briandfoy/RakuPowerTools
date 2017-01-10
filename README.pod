@@ -7,7 +7,7 @@
 This is the I<README> for the L<PerlPowerTools> Perl module. This
 distribution provides pure-Perl6 implementations of popular Unix tools
 aimed at the less fortunate systems that don't come with them. This
-was inspired by the PerlPowerTools project (http://www.perlpowertools)
+was inspired by the PerlPowerTools project (http://www.perlpowertools.com)
 from Tom Christiansen, who did the same thing with Perl 5.
 
 You're probably looking at this because you don't know where else to
