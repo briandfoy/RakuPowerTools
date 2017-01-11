@@ -50,17 +50,10 @@ brian d foy, C<< brian.d.foy@gmail.com >>
 
 =end pod
 
-# If one of the formatting switches isn't there, the -C
-# is the default. But, I can't modify the value of $C after
-# argument processing. I'll preprocess the argument list to
-# insert it.
-my @switches = @*ARGS.grep( /^\-<[bCcdox]>$/ );
-@*ARGS.unshift( '-C' ) unless @switches.elems;
-
 sub MAIN (
 	Filename $file,
 	Bool :$b = False, # octets, three columns
-	Bool :$C = False, # octets, hex and ascii
+	Bool :$C is copy = False, # octets, hex and ascii
 	Bool :$c = False, # octets, character
 	Bool :$d = False, # words, decimal
 	Bool :$o = False, # words, octal
@@ -70,6 +63,10 @@ sub MAIN (
 	# length might need to align to boundaries?
 	Int  :$n where { $_ >= 0 } = 0,     # length
 	) {
+
+	# If one of the formatting switches isn't there, the -C
+	# is the default.
+	$C ||= not @*ARGS.first: /^\-<[bCcdox]>$/;
 
 	my $fh = try { open $file, :r, :bin } or
 		die "Could not open $file: $!";
