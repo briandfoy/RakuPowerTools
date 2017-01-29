@@ -1,0 +1,44 @@
+#!/Applications/Rakudo/bin/perl6
+
+use v6;
+
+=begin metadata
+
+Name: false
+Description: exit unsuccesfully
+Author: brian d foy, bdfoy@cpan.org
+License: perl
+
+=end metadata
+
+
+=begin pod
+
+=head1 NAME
+
+false - Exit unsuccesfully
+
+=head1 SYNOPSIS
+
+	$ false
+
+=head1 DESCRIPTION
+
+I<true> exits succesfully. I<false> exits unsuccesfully.
+
+=head1 AUTHOR
+
+brian d foy, C<< <bdfoy@cpan.org> >>
+
+=head1 COPYRIGHT and LICENSE
+
+Copyright © 2017, brian d foy
+
+Perl 6 Power Tools is available under the Artistic License 2.0
+
+=end pod
+
+our $VERSION = '1.000';
+
+exit 1;
+
