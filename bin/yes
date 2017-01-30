@@ -1,0 +1,48 @@
+#!perl6
+
+=begin metadata
+
+Name: yes
+Description: print out a string till doomsday
+Author: brian d foy, bdfoy@cpan.org
+License: artistic 2.0
+
+=end metadata
+
+
+=begin pod
+
+=head1 NAME
+
+yes - print out a string till doomsday
+
+=head1 SYNOPSIS
+
+yes [string]
+
+=head1 DESCRIPTION
+
+I<yes> repeatedly prints out its argument on standard output, until killed.
+If no strings are given, I<y> is printed.
+
+=head1 AUTHOR
+
+brian d foy, C<< <bdfoy@cpan.org> >>
+
+=head1 COPYRIGHT and LICENSE
+
+Copyright © 2017, brian d foy
+
+Perl 6 Power Tools is available under the Artistic License 2.0
+
+=end pod
+
+our $VERSION = '1.000';
+my $exit_base = 128;
+
+sub MAIN ( Str $string = 'y' ) {
+	signal(SIGINT).tap( { exit( $exit_base + 2 ) } );
+	loop { say $string }
+	}
+
+
