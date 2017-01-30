@@ -1,0 +1,63 @@
+#!perl6
+
+use v6;
+
+=begin metadata
+
+Name: primes
+Description: output prime numbers
+Author: brian d foy, bdfoy@cpan.org
+License: artistic 2.0
+
+=end metadata
+
+
+=begin pod
+
+=head1 NAME
+
+primes - output prime numbers, one per line
+
+=head1 SYNOPSIS
+
+	$ primes [ START [, STOP ] ]
+
+=head1 DESCRIPTION
+
+B<primes> outputs a list of primes, one per line, optionally starting at START
+and stopping at STOP.
+
+If STOP is less than START, <primes> outputs nothing.
+
+=head1 AUTHOR
+
+brian d foy, C<< <bdfoy@cpan.org> >>
+
+=head1 COPYRIGHT and LICENSE
+
+Copyright © 2017, brian d foy
+
+Perl 6 Power Tools is available under the Artistic License 2.0
+
+=end pod
+
+our $VERSION = '1.000';
+
+sub MAIN ( Int $start? = 2, Int $end? ) {
+	my $number = $start;
+	loop {
+		FIRST {
+			last if $end.defined and $end < $start;
+			if $number <= 2 {
+				say 2;
+				$number = 3;
+				}
+			$number += 1 if $number %% 2;
+			}
+
+		last if $end.defined && $number > $end;
+
+		say $number if $number.is-prime;
+		$number += 2;
+		}
+	}
