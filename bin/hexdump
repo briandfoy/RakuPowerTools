@@ -91,6 +91,8 @@ sub MAIN (
 		}
 
 	$counter.fmt( '%08x  ' ).print;
+
+	return 0;
 	}
 
 #| when you read a word, take the octets in this order
