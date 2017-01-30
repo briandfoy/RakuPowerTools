@@ -2,6 +2,15 @@
 
 subset Filename of Str where .IO.r;
 
+=begin metadata
+
+Name: hexdump
+Description: show a hex dump
+Author: brian d foy, bdfoy@cpan.org
+License: artistic 2.0
+
+=end metadata
+
 =begin pod
 
 =head1 NAME
