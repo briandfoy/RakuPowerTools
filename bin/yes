@@ -38,10 +38,10 @@ Perl 6 Power Tools is available under the Artistic License 2.0
 =end pod
 
 our $VERSION = '1.000';
-my $exit_base = 128;
+my $exit_base = 128; # which shell are we in?
 
 sub MAIN ( Str $string = 'y' ) {
-	signal(SIGINT).tap( { exit( $exit_base + 2 ) } );
+	signal(SIGINT).tap( { exit( $exit_base + SIGINT ) } );
 	loop { say $string }
 	}
 
