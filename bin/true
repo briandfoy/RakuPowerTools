@@ -7,7 +7,7 @@ use v6;
 Name: true
 Description: exit succesfully
 Author: brian d foy, bdfoy@cpan.org
-License: perl
+License: artistic 2.0
 
 =end metadata
 
