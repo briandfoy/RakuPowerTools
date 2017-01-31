@@ -41,8 +41,11 @@ subtest {
 	my $path = $*SPEC.catfile( @parts.flat );
 	my $expected = $*SPEC.catfile: @parts[0..*-2];
 	my $proc = run $*EXECUTABLE, $program, $path, :out;
-	is $proc.exitcode, 0, 'exit code';
 	is $proc.out.get, $expected, 'Got the path';
+	try { # https://rt.perl.org/Ticket/Display.html?id=125757
+		$proc.out.close
+		};
+	is $proc.exitcode, 0, 'exit code';
 	}, "{$program} with path";
 
 done-testing();
