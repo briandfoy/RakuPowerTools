@@ -1,0 +1,48 @@
+#!perl6
+
+=begin metadata
+
+Name: dirname
+Description: print the directory name of a path
+Author: brian d foy, brian.d.foy@gmail.com
+License: artistic 2.0
+
+=end metadata
+
+=cut
+
+our $VERSION = '1.000';
+
+sub MAIN ( Str $path ) {
+	say @*ARGS[0].IO.dirname;
+
+	return 0;
+	}
+
+=begin pod
+
+=head1 NAME
+
+dirname - output the directory name of a path
+
+=head1 SYNOPSIS
+
+	$ dirname path
+
+=head1 DESCRIPTION
+
+I<dirname> prints the directory component of the specified path.
+
+=head1 AUTHOR
+
+brian d foy, C<< <brian.d.foy@gmail.com> >>
+
+=head1 COPYRIGHT and LICENSE
+
+Copyright © 2017, brian d foy
+
+This program is part of the Perl 6 Power Tools and is available
+under the Artistic License 2.0
+
+=end pod
+
