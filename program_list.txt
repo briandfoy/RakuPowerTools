@@ -25,11 +25,11 @@ date
 dc
 deroff
 diff
-dirname
+X dirname
 du
 echo
 ed
-env
+X env
 expand
 expr
 factor
@@ -71,7 +71,7 @@ ping
 pom
 ppt
 pr
-primes
+X primes
 printenv
 printf
 pwd
