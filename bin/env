@@ -1,0 +1,111 @@
+#!/usr/bin/perl
+
+=begin metadata
+
+Name: env
+Description: run a program in a modified environment
+Author: brian d foy, brian.d.foy@gmail.com
+License: artistic2
+
+=end metadata
+
+loop {
+	last unless @*ARGS;
+	last unless @*ARGS[0] ~~ / ^ '-' /;
+	my $switch = shift @*ARGS;
+
+	if $switch eq '-i' {
+		%*ENV = {};
+		next;
+		}
+	if $switch ~~ / ^ '-u' $<key> = (.+) / {
+		say "Deleting {$<key>}";
+		%*ENV{$<key>}:delete;
+		next;
+		}
+
+	$*ERR.say( qq/$*PROGRAM: invalid option {$switch}/ );
+	exit 2;
+	}
+
+loop {
+	last unless @*ARGS;
+	last unless @*ARGS[0] ~~ /^ $<name> = (.+?) '=' $<value> = (.+) /;
+	%*ENV{ $<name> } = $<value>;
+	shift @*ARGS;
+	}
+
+if @*ARGS.elems == 0 {
+	for %*ENV.keys.sort -> $key {
+		say qq/{$key}={%*ENV{$key}}/;
+		}
+	exit 0;
+	}
+
+# Perl 6 doesn't have exec. WTF?
+my $proc = run( @*ARGS );
+exit 127 if $proc.exitcode > 0;
+
+
+=begin pod
+
+=head1 NAME
+
+env - Run a program in a modified environment
+
+=head1 SYNOPSIS
+
+	$ env [-i] [-u name]... [name=value]... [command [args]...]
+
+	# clear the environment
+	$ env -i [command [args]...]
+
+	# delete an environment variable
+	$ env -uHOME [command [args]...]
+
+	# add an environment variable
+	$ env ACCESS_TOKEN=123 [command [args]...]
+
+=head1 DESCRIPTION
+
+I<env> runs a command with the environment modified as specified
+by the command line. If no command is specified, I<env> prints
+out the modified environment.
+
+=head2 OPTIONS
+
+I<env> accepts the following options:
+
+=over 4
+
+=item B<-i>
+
+Clears the environment, passing only the values specifed to the command.
+
+=item B<-u> I<name>
+
+Clears the environment variable I<name> if it exists.
+
+=back
+
+=head1 DIAGNOSTICS
+
+If the command is invoked, the exit status of I<env> will be the exit
+status of the command.  Otherwise, I<env> will return one of the following
+values:
+
+    0          env completed successfully.
+    1-125      An error occured in env.
+    127        There was an error running the command specified.
+
+=head1 AUTHOR
+
+brian d foy, C<< <dragons@scescape.net> >>.
+
+=head1 COPYRIGHT and LICENSE
+
+Copyright © 2017 brian d foy
+
+This program is available under the Artistic License 2.0.
+
+=end pod
