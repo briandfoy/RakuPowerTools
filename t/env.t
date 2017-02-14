@@ -6,18 +6,16 @@ use Test;
 
 my $program = $*SPEC.catfile: <bin env>;
 
-my $null_fh = $*SPEC.devnull.IO.open: :w;
-
 subtest {
 	ok $program.IO.e, "Program {$program} exists";
-	my $proc = run $*EXECUTABLE, '-c', $program, :out, :err($null_fh);
+	my $proc = run $*EXECUTABLE, '-c', $program, :out, :err;
 	my $output = $proc.out.slurp-rest( :close );
 	is $output, "Syntax OK\n", "Sees 'Syntax OK' message";
 	is $proc.exitcode, 0, 'compile check exit code';
 	}, 'Boring setup things';
 
 subtest {
-	my $proc = run $*EXECUTABLE, $program, :out($null_fh);
+	my $proc = run $*EXECUTABLE, $program, :out;
 	$proc.out.close.so;
 	is $proc.exitcode, 0, 'exit code';
 	}, "{$program} exits with true value";
