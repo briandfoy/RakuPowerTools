@@ -11,12 +11,8 @@ my $null_fh = $*SPEC.devnull.IO.open;
 subtest {
 	ok $program.IO.e, "Program {$program} exists";
 	my $proc = run $*EXECUTABLE, '-c', $program, :out, :err($null_fh);
-	my $output = $proc.out.slurp-rest;
+	my $output = $proc.out.slurp-rest( :close );
 	is $output, "Syntax OK\n", 'Syntax OK message';
-	try { # https://rt.perl.org/Ticket/Display.html?id=125757
-		$proc.out.close;
-		$proc.err.close
-		};
 	is $proc.exitcode, 0, 'compile check exit code';
 	}, 'Boring setup things';
 
@@ -31,7 +27,7 @@ subtest {
 
 	is $out.get, 3581, '501th prime is 3581';
 
-	$out.close;
+	$out.close.so;
 	is $proc.exitcode, 0, 'exit code';
 	}, "{$program} with no arguments";
 
@@ -44,7 +40,7 @@ subtest {
 	is @lines.elems, 4, 'There are four primes';
 	is @lines, qw/2 3 5 7/, 'Prime list is correct';
 
-	$out.close;
+	$out.close.so;
 	is $proc.exitcode, 0, 'exit code';
 	}, "{$program} with with args 2 and 10";
 
@@ -56,7 +52,7 @@ subtest {
 
 	is @lines, qw/2/, 'There is one prime';
 
-	$out.close;
+	$out.close.so;
 	is $proc.exitcode, 0, 'exit code';
 	}, "{$program} with with args 2 and 2";
 
@@ -67,7 +63,7 @@ subtest {
 	my @lines = $out.lines;
 	is @lines.elems, 0, 'No primes';
 
-	$out.close;
+	$out.close.so;
 	is $proc.exitcode, 0, 'exit code';
 	}, "{$program} with with args 2 and 1";
 

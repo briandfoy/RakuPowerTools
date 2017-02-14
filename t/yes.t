@@ -11,12 +11,8 @@ my $null_fh = $*SPEC.devnull.IO.open;
 subtest {
 	ok $program.IO.e, "Program {$program} exists";
 	my $proc = run $*EXECUTABLE, '-c', $program, :out, :err($null_fh);
-	my $output = $proc.out.slurp-rest;
+	my $output = $proc.out.slurp-rest( :close );
 	is $output, "Syntax OK\n", 'Syntax OK message';
-	try { # https://rt.perl.org/Ticket/Display.html?id=125757
-		$proc.out.close;
-		$proc.err.close
-		};
 	is $proc.exitcode, 0, 'compile check exit code';
 	}, 'Boring setup things';
 
@@ -31,7 +27,7 @@ subtest {
 
 	is $out.get, 'y', '501th line is "y"';
 
-	$out.close;
+	$out.close.so;
 	is $proc.exitcode, 0, 'exit code';
 	}, "{$program} with no arguments";
 
@@ -46,7 +42,7 @@ subtest {
 
 	is $out.get, 'ni', '501th line is "ni"';
 
-	$out.close;
+	$out.close.so;
 	is $proc.exitcode, 0, 'exit code';
 	}, "{$program} with 'ni' argument";
 
