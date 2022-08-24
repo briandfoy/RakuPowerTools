@@ -2,7 +2,7 @@
 
 =encoding utf8
 
-=head1 The Perl6PowerTools module
+=head1 The RakuPowerTools module
 
 This is the I<README> for the L<PerlPowerTools> Perl module. This
 distribution provides pure-Perl6 implementations of popular Unix tools
@@ -10,9 +10,9 @@ aimed at the less fortunate systems that don't come with them. This
 was inspired by the PerlPowerTools project (http://www.perlpowertools.com)
 from Tom Christiansen, who did the same thing with Perl 5.
 
-You're probably looking at this because you don't know where else to
-find what you're looking for. Read this once and you might never have
-to read one again for any Perl module.
+This is mostly just for giggles now. The PerlPowerTools brought familiar Unix
+utilities to Windows, but with the Windows Subsystem for Linux (or Docker, or
+whatever), you don't really need this stuff anymore.
 
 =head2 Source location
 
@@ -20,16 +20,16 @@ The source is in GitHub:
 
 =over 4
 
-=item *	L<https://github.com/briandfoy/Perl6PowerTools>
+=item *	L<https://github.com/briandfoy/RakuPowerTools>
 
 =back
 
 If you find a problem, file a ticket in the L<issue
-tracker|https://github.com/briandfoy/Perl6PowerTools/issues>:
+tracker|https://github.com/briandfoy/RakuPowerTools/issues>:
 
 =over 4
 
-=item *	L<https://github.com/briandfoy/Perl6PowerTools/issues>
+=item *	L<https://github.com/briandfoy/RakuPowerTools/issues>
 
 =back
 
@@ -39,9 +39,8 @@ Although I'm happy to hear from module users in private email,
 that's the best way for me to forget to do something.
 
 Besides the issue trackers, you can find help at
-L<Perlmonks|http://www.perlmonks.org> or
 L<Stackoverflow|http://www.stackoverflow.com>, both of which have many
-competent Perlers who can answer your question, almost in real time.
+competent Raku-ers who can answer your question, almost in real time.
 They might not know the particulars of this module, but they can help
 you diagnose your problem.
 
@@ -55,6 +54,6 @@ you wrote code that you didn't.
 
 Enjoy,
 
-brian d foy, brian.d.foy@gmail.com
+brian d foy, briandfoy@pobox.com
 
 =cut
